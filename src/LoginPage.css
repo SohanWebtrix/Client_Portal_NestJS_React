@@ -1,0 +1,525 @@
+/* BASE STYLES */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+html, body, #root {
+  height: 100%;
+}
+/* Main Wrapper */
+.login-wrapper { 
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+}
+
+/* --- LEFT PANEL (BLUE MARKETING SECTION) --- */
+.left-panel { 
+  width: 45%; 
+  background: #0d6efd; /* Primary Blue */
+  color: white;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center;
+  text-align: center;
+  height: 100vh;
+}
+.left-image {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  margin-bottom: 30px;
+}
+.left-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin-top: 20px;
+  line-height: 1.1;
+}
+.left-desc {
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+.left-list {
+  list-style: none;
+  width: 70%;
+  text-align: left;
+  line-height: 2;
+  margin: 10px auto 0; /* Center list */
+  padding-left: 0; /* Remove default list padding */
+}
+.left-list p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+/* --- RIGHT PANEL (LOGIN FORM SECTION) --- */
+.right-panel { 
+  width: 55%; 
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center;
+  overflow-y: auto; 
+  height: 100vh;
+}
+
+/* Content wrapper to constrain width and manage vertical space */
+.form-content-wrap {
+  width: 100%;
+  max-width: 420px;
+  height: 100%; /* Make it fill available height in right-panel */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between; /* Distribute space for header, content, footer */
+  padding: 20px 0; /* Add some vertical padding inside the wrap */
+}
+
+/* Static Header Elements */
+.logo-img { 
+  width: 180px;
+  margin-bottom: 4px;
+}
+h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: -10px;
+}
+.subtitle {
+  color: darkgray;
+  font-size: 15px;
+  margin-bottom: 40px; 
+  margin-top: 20px;
+}
+
+/* --- TAB SWITCH (PASSWORD / OTP) --- */
+.login-tabs { 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f1f1f1; 
+  padding: 4px;
+  border-radius: 10px;
+  width: 100%;
+  height: 48px;
+  margin-bottom: 30px; 
+  position: relative; 
+  overflow: hidden;
+  flex-shrink: 0; /* Prevent tabs from shrinking */
+}
+
+/* THE SLIDING INDICATOR BAR */
+.login-tabs::after {
+  content: '';
+  position: absolute;
+  top: 4px; 
+  bottom: 4px; 
+  left: 4px; 
+  width: calc(50% - 4px); 
+  background: white; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+  z-index: 1; 
+}
+
+/* Move the slider when the state is 'otp' */
+.login-tabs[data-active-tab="otp"]::after {
+  transform: translateX(100%);
+}
+
+/* Common styles for both tab buttons */
+.login-tabs button {
+  flex: 1;
+  border: none;
+  cursor: pointer;
+  height: 100%;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.3s ease; 
+  white-space: nowrap;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; 
+  background-color: transparent; 
+  z-index: 2; 
+}
+
+/* Active Tab: Text color logic */
+.active-tab-button { 
+  background: transparent !important; 
+  color: #0d6efd; 
+  font-weight: 500 !important;
+  box-shadow: none !important; 
+}
+
+/* Inactive Tab: Text color is dark gray */
+.inactive-tab-link { 
+  background: transparent;
+  color: #444;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* DYNAMIC FORM CONTENT AREA STABILIZATION */
+.form-content-area {
+    width: 100%;
+    /* Use flex-grow to make it take up available space, 
+       but set a max-height to ensure it doesn't push elements out.
+       The flex setup in .form-content-wrap will manage the rest. */
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Crucial: Ensure content starts from the top */
+    /* Remove margin-bottom, let form-content-wrap handle spacing */
+    margin-bottom: 0; 
+}
+
+/* Wrapper for individual forms */
+.form-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Adjust margin to fine-tune vertical spacing within the content area */
+    padding-bottom: 20px; /* Space above buttons/back link if needed */
+}
+
+/* --- FORM GROUP & INPUT STYLES --- */
+.form-group {
+  width: 100%;
+  margin-bottom: 20px;
+}
+.input-lb {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  width: 100%;
+}
+.input-with-icon {
+  position: relative;
+  width: 100%;
+}
+.input-fd {
+  width: 100%;
+  height: 48px;
+  padding: 12px;
+  border: 2px solid rgba(8, 8, 8, 0.067);
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.input-left-icon, .left-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: lightgray;
+  pointer-events: none; 
+}
+.with-left-icon {
+  padding-left: 45px !important;
+}
+.input-fd:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(10,102,255,0.1);
+}
+.right-eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: lightgray;
+  cursor: pointer;
+}
+
+/* --- PASSWORD FORM FOOTER --- */
+.flex-row-space-between-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; 
+}
+.forgot-password-link {
+  font-size: 14px;
+  color: #FFB300; 
+  text-decoration: none;
+  font-weight: 500;
+}
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+.checkbox-container {
+  display: block;
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  color: darkgray;
+  user-select: none;
+  text-align: left;
+}
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.checkmark {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #eee;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 3px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* --- OTP FORM SPECIFIC STYLES (MATCHING IMAGE) --- */
+.otp-illustration {
+    max-width: 120px; /* Adjust size as needed to match image */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.otp-heading-section {
+    text-align: center;
+    margin-bottom: 30px; /* Space between heading and input */
+}
+
+.section-title { /* Shared with PasswordForm h3 if needed, but OTP has its own title */
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.subtitle-small {
+  color: gray;
+  font-size: 14px;
+  margin-bottom: 0; /* Managed by otp-heading-section */
+}
+
+/* Back to Password Link for OTP (matching image, simple text) */
+.back-link {
+  font-size: 14px;
+  color: #0d6efd; /* Blue color as in the image */
+  cursor: pointer;
+  font-weight: 600; /* As in the image */
+  transition: opacity 0.2s;
+  margin-top: 20px; /* Space below OTP button */
+  display: inline-block; /* Allows vertical margin */
+}
+.back-link:hover {
+  opacity: 0.8;
+}
+
+/* --- BUTTONS & FOOTER --- */
+.sign-btn { 
+  width: 100%;
+  padding: 14px;
+  background: #1e77fd;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 0; /* Space handled by .form-wrapper or .form-content-area */
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+.sign-btn:hover {
+  background: #0954d4;
+}
+
+/* Secure Note (Fixed at bottom of .form-content-wrap) */
+.secure-note {
+   font-size: 13px;
+    color: #999;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 200px;
+}
+
+/* --- MOBILE VIEW --- */
+@media (max-width: 768px) {
+  .left-panel {
+    display: none !important;
+  }
+  .right-panel {
+    width: 100% !important;
+    padding: 25px 20px;
+    justify-content: flex-start;
+    min-height: 100vh;
+  }
+  .form-content-wrap {
+    max-width: 380px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0; /* Remove vertical padding for mobile */
+  }
+  h3 {
+    font-size: 20px;
+  }
+  .subtitle {
+    font-size: 13px;
+  }
+  .input-fd {
+    height: 44px;
+    font-size: 14px;
+  }
+  .sign-btn {
+    font-size: 16px;
+    height: 46px;
+  }
+  .secure-note {
+      margin-top: -20px; 
+      margin-bottom: 50px;
+  }
+}
+
+input::placeholder{
+  color: lightgray;
+}
+
+.phone-icon-box {
+    background: #e6f0ff; 
+    color: #0d6efd;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.back-link {
+  margin-top: 25px;
+  color: #FFA500; 
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ================================
+   OTP INPUT BOXES (EXACT DESIGN)
+================================= */
+
+.otp-box-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin: 25px 0 30px;
+}
+
+.otp-input-box {
+    width: 48px;
+    height: 52px;
+    border-radius: 10px;
+    border: 2px solid rgba(8, 8, 8, 0.125);
+    outline: none;
+    font-size: 20px;
+    text-align: center;
+    font-weight: 600;
+    background: #fff;
+    transition: border-color 0.2s ease;
+}
+
+.otp-input-box:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(10,102,255,0.12);
+}
+
+/* For mobile responsive stacking */
+@media (max-width: 400px) {
+    .otp-box-container {
+        gap: 6px;
+        justify-content: center;
+    }
+
+    .otp-input-box {
+        width: 40px;
+        height: 48px;
+        font-size: 18px;
+    }
+}
+
+/* RESEND BUTTON (same styling as in your UI) */
+.resend-btn {
+    width: 100%;
+    padding: 17px;
+    background: transparent;
+    border: 2px solid #0d6efd;
+    color: #0d6efd;
+    border-radius: 10px;
+    margin-top: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.resend-btn:hover {
+    background: #e6f0ff;
+}
+
+/* OTP SUBTITLE after sending OTP */
+.subtitle-small {
+    color: darkgray;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
