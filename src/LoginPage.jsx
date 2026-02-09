@@ -1,5 +1,5 @@
 // src/components/AuthPage.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     FaEnvelope, FaLock, FaEye, FaKey, FaMobileAlt, FaSignInAlt,
     FaEyeSlash, FaPaperPlane, FaPhoneAlt, FaArrowLeft
@@ -8,7 +8,10 @@ import './LoginPage.css';
 // Ensure these image paths are correct relative to AuthPage.jsx
 import UserIllustration from './assets/UserLogin.png';
 import Logo from './assets/logo.png';
-import { sentOTPAPI, VerifyOtp } from './api/allApi';
+import { ResentOTP, sentOTPAPI, SignInUser, VerifyOtp } from './api/allApi';
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 // New image for OTP illustration
 
 
@@ -19,26 +22,46 @@ const PasswordForm = () => {
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
 
-    const handleSignIn = () => {
+    const navigate = useNavigate();
+
+    const handleSignIn = async () => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
 
         if (!emailPattern.test(email)) {
 
-            alert("⚠ Please enter a valid email (example: name@gmail.com)");
+            toast.error("⚠ Please enter a valid email (example: name@gmail.com)");
 
             return;
 
         }
         if (!email.trim() || !password.trim()) {
-            alert("⚠ Please fill in all fields.");
+            toast.error("⚠ Please fill in all fields.");
             return;
         }
         if (remember) {
             localStorage.setItem("savedEmail", email);
         }
-        alert("🎉 Login Successful!");
+
+        try {
+            const res = await SignInUser({
+                validemail: email,
+                validPass: password,
+            })
+            const data = await res.json()
+
+            if (!res.ok) {
+                toast.error(data.message || "Fail to send OTP")
+                return
+            }
+            toast.success("✅ User Logged In succesfully");
+
+            navigate("/dashboard")
+
+        } catch (err) {
+            console.error(err);
+            toast.error("❌ Something went wrong");
+        }
+
     };
 
     return (
@@ -111,13 +134,38 @@ const PasswordForm = () => {
 };
 
 const OTPForm = ({ setActiveTab }) => {
+
+
     const [phone, setPhone] = useState("");
     const [otpSent, setOtpSent] = useState(false); // NEW
     const [otp, setOtp] = useState(["", "", "", "", "", ""]); // NEW
+    const [resendTimer, setResendTimer] = useState(60);
+    const [canResend, setCanResend] = useState(false);
+    const navigate = useNavigate(); // ✅ correct place
+
+
+    useEffect(() => {
+        if (!otpSent || canResend) return;
+
+        const interval = setInterval(() => {
+            setResendTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    setCanResend(true);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [otpSent, canResend]);
+
+
 
     const handleSendOTP = async (phone) => {
         if (!phone.trim() || phone.length !== 10) {
-            alert("⚠ Please enter a valid 10-digit mobile number.");
+            toast.error("⚠ Please enter a valid 10-digit mobile number.");
             return;
         }
         try {
@@ -125,17 +173,19 @@ const OTPForm = ({ setActiveTab }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                alert(data.message || "Failed to send OTP");
+                toast.error(data.message || "Failed to send OTP");
                 return
             }
 
             setOtpSent(true); // move to OTP screen
-            alert("📩 OTP sent successfully!");
+            setCanResend(false);
+            setResendTimer(60);
+            toast.success("📩 OTP sent successfully!");
         }
 
         catch (error) {
             console.error(error);
-            alert("❌ Server error. Please try again.");
+            toast.error("❌ Server error. Please try again.");
         }
 
     };
@@ -157,7 +207,7 @@ const OTPForm = ({ setActiveTab }) => {
     const handleVerify = async () => {
         const finalOtp = otp.join("");
         if (finalOtp.length !== 6) {
-            alert("❌ Enter full 6-digit OTP");
+            toast.error("❌ Enter full 6-digit OTP");
             return;
         }
 
@@ -169,27 +219,40 @@ const OTPForm = ({ setActiveTab }) => {
             const data = await res.json()
 
             if (!res.ok) {
-                alert(`${data.message}`)
+                toast.error(data.message || "Fail to send OTP")
                 return
             }
-            alert("✅ OTP Verified Successfully!");
+            toast.success("✅ OTP Verified Successfully!");
 
-            // 🔐 SAVE TOKEN
-            localStorage.setItem("token", data.token);
-
-            // 👉 redirect to dashboard
-            // navigate("/dashboard");
+            navigate("/dashboard")
 
         } catch (err) {
             console.error(err);
-            alert("❌ Something went wrong");
+            toast.error("❌ Something went wrong");
         }
 
     };
 
-    const handleResend = () => {
-        alert("🔄 OTP Resent!");
+    const handleResend = async () => {
+        try {
+
+            const response = await ResentOTP({ phone })
+            const data = await response.json();
+
+            if (!response.ok) {
+                toast.error(data.message);
+                return;
+            }
+
+            toast.success("🔄 OTP resent successfully!");
+            setCanResend(false);
+            setResendTimer(60);
+
+        } catch (err) {
+            toast.error("❌ Failed to resend OTP", err);
+        }
     };
+
 
     return (
         <div className="form-wrapper">
@@ -274,9 +337,14 @@ const OTPForm = ({ setActiveTab }) => {
                         Verify Now
                     </button>
 
-                    <button className="resend-btn" onClick={handleResend}>
-                        Resend OTP
+                    <button
+                        className="resend-btn"
+                        onClick={handleResend}
+                        disabled={!canResend}
+                    >
+                        {canResend ? "Resend OTP" : `Resend in ${resendTimer}s`}
                     </button>
+
                 </>
             )}
 
