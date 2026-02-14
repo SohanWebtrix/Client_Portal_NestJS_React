@@ -13,6 +13,8 @@ export async function sentOTPAPI({ phone }) {
     })
 }
 
+
+
 export async function ResentOTP({ phone }) {
     return fetch(`${LOCAL_FORM_API}/auth/resend-otp`, {
         method: "POST",
@@ -22,6 +24,19 @@ export async function ResentOTP({ phone }) {
         body: JSON.stringify({
             mobile: phone,
         })
+    })
+}
+
+
+export async function logoutAPI() {
+    return fetch(`${LOCAL_FORM_API}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+
+        headers: {
+            "Content-Type": "application/json",
+        },
+
     })
 }
 

@@ -1,5 +1,5 @@
 // src/components/AuthPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     FaEnvelope, FaLock, FaEye, FaKey, FaMobileAlt, FaSignInAlt,
     FaEyeSlash, FaPaperPlane, FaPhoneAlt, FaArrowLeft
@@ -135,14 +135,20 @@ const PasswordForm = () => {
 
 const OTPForm = ({ setActiveTab }) => {
 
-
     const [phone, setPhone] = useState("");
     const [otpSent, setOtpSent] = useState(false); // NEW
     const [otp, setOtp] = useState(["", "", "", "", "", ""]); // NEW
     const [resendTimer, setResendTimer] = useState(60);
     const [canResend, setCanResend] = useState(false);
     const navigate = useNavigate(); // ✅ correct place
+    const firstOtpRef = useRef(null);
 
+
+    useEffect(() => {
+        if (otpSent && firstOtpRef.current) {
+            firstOtpRef.current.focus();
+        }
+    }, [otpSent])
 
     useEffect(() => {
         if (!otpSent || canResend) return;
@@ -162,12 +168,13 @@ const OTPForm = ({ setActiveTab }) => {
     }, [otpSent, canResend]);
 
 
-
     const handleSendOTP = async (phone) => {
+
         if (!phone.trim() || phone.length !== 10) {
             toast.error("⚠ Please enter a valid 10-digit mobile number.");
             return;
         }
+
         try {
             const response = await sentOTPAPI({ phone });
             const data = await response.json();
@@ -308,6 +315,7 @@ const OTPForm = ({ setActiveTab }) => {
                             <input
                                 key={index}
                                 id={`otp-${index}`}
+                                ref={index === 0 ? firstOtpRef : null}
                                 type="text"
                                 maxLength={1}
                                 className="otp-input-box"
